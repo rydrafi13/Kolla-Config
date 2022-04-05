@@ -1,0 +1,24 @@
+# On node deployment
+- Set up inventory
+nano multinode
+
+- Checking Connectivity
+ansible all -i multinode -m ping
+
+- Kolla-Password Generator
+kolla-genpwd
+
+- Set Up globals.yml
+nano /etc/kolla/globals.yml
+
+- Bootstrap Server
+kolla-ansible -i ./multinode bootstrap-servers
+
+- Pre-deployment testing
+kolla-ansible -i ./multinode prechecks
+
+- Deployment
+kolla-ansible -i ./multinode deploy
+
+- Post-Deploy
+kolla-ansible -i ./multinode post-deploy

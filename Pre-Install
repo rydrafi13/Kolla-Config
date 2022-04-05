@@ -1,0 +1,48 @@
+# on all node server
+- set date and time
+timedatectl set-timezone Asia/Jakarta
+date
+
+- set hostname
+hostnamectl set-hostname [controller01:10]
+hostnamectl set-hostname [compute01:18]
+hostnamectl set-hostname [monitoring]
+
+- Update & Upgrade Repo
+sudo apt clean all && sudo apt update -y && sudo apt upgrade -y
+
+- Install sshpass
+sudo apt install sshpass -y
+
+- create user openstack
+useradd -m -s /bin/bash openstack
+passwd openstack
+
+- add user to group sudo
+usermod -aG sudo openstack
+
+- edit visudo
+echo "openstack ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/openstack
+
+# on node deployment (controller01)
+- set /etc/hosts
+list all node
+10.0.0.1:10 controller01:10
+10.0.0.11:28 compute01:18
+10.0.0.29 monitor
+
+- config ssh
+nano /etc/ssh/ssh_config
+StrictHostKeyChecking no
+
+- ssh-keygen
+ssh-keygen -t rsa
+
+- create file hostname
+nano hosts.txt
+
+- create file pass.txt
+echo "@dmin123" > pass.txt 
+
+- ssh-copy-id
+for hostname in `cat hosts.txt`; do sshpass -f pass.txt ssh-copy-id openstack@${hostname}; done
